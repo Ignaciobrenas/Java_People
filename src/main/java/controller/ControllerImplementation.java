@@ -517,6 +517,7 @@ public class ControllerImplementation implements IController, ActionListener {
     public void deleteAll() {
         try {
             dao.deleteAll();
+                  JOptionPane.showMessageDialog(menu, "All persons have been deleted successfully!", "Delete All - People v1.1.0", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             if (ex instanceof FileNotFoundException || ex instanceof IOException
                     || ex instanceof ParseException || ex instanceof ClassNotFoundException
