@@ -268,9 +268,19 @@ public class ControllerImplementation implements IController, ActionListener {
 
     public void handleDeletePerson() {
         if (delete != null) {
-            Person p = new Person(delete.getNif().getText());
-            delete(p);
-            delete.getReset().doClick();
+            Object[] options = {"Yes", "No"};
+            int answer = JOptionPane.showOptionDialog(delete,"Are you sure you want to delete this person?", "Delete - People v1.1.0",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    options,
+                    options[1]
+            );
+            if (answer == 0) {
+                Person p = new Person(delete.getNif().getText());
+                delete(p);
+                delete.getReset().doClick();
+            }
         }
     }
 
@@ -434,6 +444,7 @@ public class ControllerImplementation implements IController, ActionListener {
         try {
             if (dao.read(p) != null) {
                 dao.delete(p);
+                JOptionPane.showMessageDialog(delete, "Person deleted successfully!", "Delete - People v1.1.0", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 throw new PersonException(p.getNif() + " is not registered and can not "
                         + "be DELETED");
@@ -512,7 +523,7 @@ public class ControllerImplementation implements IController, ActionListener {
     public void deleteAll() {
         try {
             dao.deleteAll();
-                  JOptionPane.showMessageDialog(menu, "All persons have been deleted successfully!", "Delete All - People v1.1.0", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(menu, "All persons have been deleted successfully!", "Delete All - People v1.1.0", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             if (ex instanceof FileNotFoundException || ex instanceof IOException
                     || ex instanceof ParseException || ex instanceof ClassNotFoundException
