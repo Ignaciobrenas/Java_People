@@ -19,7 +19,7 @@ import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePicker;
 
 /**
- * Interface used to register a person. It is mandatory to enter at least the
+ * Interface used to register a person. It is mandatory to enter at least the 
  * NIF and the name.
  *
  * @author Francesc Perez
@@ -30,6 +30,7 @@ public class Insert extends javax.swing.JDialog {
     public Insert(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
 //ingresa al boton, especificar que es el primero 
         JButton dateButton = (JButton) dateOfBirth.getComponent(1);
 // colocar el texto
@@ -37,6 +38,7 @@ public class Insert extends javax.swing.JDialog {
 //coloquemos el tamaño en nulo 
         dateButton.setPreferredSize(null);
         
+
         DropPhotoListener d = new DropPhotoListener(photo, this);
         DropTarget dropTarget = new DropTarget(photo, d);
         insert.setEnabled(false);
@@ -97,6 +99,11 @@ public class Insert extends javax.swing.JDialog {
         insert.setMaximumSize(new java.awt.Dimension(187, 33));
         insert.setMinimumSize(new java.awt.Dimension(187, 33));
         insert.setPreferredSize(new java.awt.Dimension(187, 33));
+        insert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insertActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -235,8 +242,6 @@ public class Insert extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         getContentPane().add(jLabel8, gridBagConstraints);
 
-        dateOfBirth.getButton().setText("Select a date");
-        dateOfBirth.setPreferredSize(new java.awt.Dimension(500, 30));
         dateOfBirth.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dateOfBirthActionPerformed(evt);
@@ -338,10 +343,15 @@ public class Insert extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_nifActionPerformed
 
-    private void dateOfBirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOfBirthActionPerformed
+    private void insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_dateOfBirthActionPerformed
-
+        JOptionPane.showMessageDialog(this, "Person inserted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        resetActionPerformed(null);
+    }//GEN-LAST:event_insertActionPerformed
+private void dateOfBirthActionPerformed(java.awt.event.ActionEvent evt) {
+    // Solo para que compile
+    
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdatepicker.JDatePicker dateOfBirth;
     private javax.swing.JButton insert;
