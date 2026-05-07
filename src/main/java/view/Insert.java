@@ -19,8 +19,9 @@ import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePicker;
 
 /**
- * Interface used to register a person. It is mandatory to enter at least the 
+ * Interface used to register a person. It is mandatory to enter at least the
  * NIF and the name.
+ *
  * @author Francesc Perez
  * @version 1.1.0
  */
@@ -29,6 +30,13 @@ public class Insert extends javax.swing.JDialog {
     public Insert(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+//ingresa al boton, especificar que es el primero 
+        JButton dateButton = (JButton) dateOfBirth.getComponent(1);
+// colocar el texto
+        dateButton.setText("Select a date");
+//coloquemos el tamaño en nulo 
+        dateButton.setPreferredSize(null);
+        
         DropPhotoListener d = new DropPhotoListener(photo, this);
         DropTarget dropTarget = new DropTarget(photo, d);
         insert.setEnabled(false);
@@ -76,8 +84,8 @@ public class Insert extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         nif = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         dateOfBirth = new org.jdatepicker.JDatePicker();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Insert - People v1.1.0");
@@ -227,6 +235,21 @@ public class Insert extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
         getContentPane().add(jLabel8, gridBagConstraints);
 
+        dateOfBirth.getButton().setText("Select a date");
+        dateOfBirth.setPreferredSize(new java.awt.Dimension(500, 30));
+        dateOfBirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateOfBirthActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 24);
+        getContentPane().add(dateOfBirth, gridBagConstraints);
+
         jLabel2.setFont(new java.awt.Font("Segoe UI", 2, 8)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Author: francesc.perez@stucom.com - Version 1.1.0");
@@ -238,17 +261,6 @@ public class Insert extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(12, 24, 12, 24);
         getContentPane().add(jLabel2, gridBagConstraints);
-
-        dateOfBirth.setMaximumSize(new java.awt.Dimension(350, 22));
-        dateOfBirth.setMinimumSize(new java.awt.Dimension(350, 22));
-        dateOfBirth.setPreferredSize(new java.awt.Dimension(350, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 24);
-        getContentPane().add(dateOfBirth, gridBagConstraints);
 
         pack();
         setLocationRelativeTo(null);
@@ -325,6 +337,10 @@ public class Insert extends javax.swing.JDialog {
     private void nifActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nifActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nifActionPerformed
+
+    private void dateOfBirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOfBirthActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateOfBirthActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdatepicker.JDatePicker dateOfBirth;
