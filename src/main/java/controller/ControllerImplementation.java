@@ -65,6 +65,8 @@ public class ControllerImplementation implements IController, ActionListener {
     private Delete delete;
     private Update update;
     private ReadAll readAll;
+    private Boolean isAdmin;
+    private Boolean isUser;
 
     /**
      * This constructor allows the controller to know which data storage option
@@ -75,6 +77,8 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     public ControllerImplementation(DataStorageSelection dSS) {
         this.dSS = dSS;
+        this.isAdmin = false;
+        this.isUser = !isAdmin;
         ((JButton) (dSS.getAccept()[0])).addActionListener(this);
     }
 
@@ -120,6 +124,7 @@ public class ControllerImplementation implements IController, ActionListener {
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
         }
+
     }
 
     private void handleDataStorageSelection() {
@@ -212,12 +217,20 @@ public class ControllerImplementation implements IController, ActionListener {
     private void setupMenu() {
         menu = new Menu();
         menu.setVisible(true);
+
         menu.getInsert().addActionListener(this);
         menu.getRead().addActionListener(this);
         menu.getUpdate().addActionListener(this);
         menu.getDelete().addActionListener(this);
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
+
+        if (!isAdmin) {
+            menu.getInsert().setEnabled(false);
+            menu.getUpdate().setEnabled(false);
+            menu.getDelete().setEnabled(false);
+            menu.getDeleteAll().setEnabled(false);
+        }
     }
 
     private void handleInsertAction() {
@@ -275,7 +288,7 @@ public class ControllerImplementation implements IController, ActionListener {
     public void handleDeletePerson() {
         if (delete != null) {
             Object[] options = {"Yes", "No"};
-            int answer = JOptionPane.showOptionDialog(delete,"Are you sure you want to delete this person?", "Delete - People v1.1.0",
+            int answer = JOptionPane.showOptionDialog(delete, "Are you sure you want to delete this person?", "Delete - People v1.1.0",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE,
                     null,
