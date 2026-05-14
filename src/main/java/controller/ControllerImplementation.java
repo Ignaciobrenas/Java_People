@@ -77,7 +77,7 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     public ControllerImplementation(DataStorageSelection dSS) {
         this.dSS = dSS;
-        this.isAdmin = false;
+        this.isAdmin = true;
         this.isUser = !isAdmin;
         ((JButton) (dSS.getAccept()[0])).addActionListener(this);
     }
@@ -123,6 +123,8 @@ public class ControllerImplementation implements IController, ActionListener {
             handleReadAll();
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
+        } else if (e.getSource() == menu.getCountAll()) {
+            handleCountAll();
         }
 
     }
@@ -224,6 +226,7 @@ public class ControllerImplementation implements IController, ActionListener {
         menu.getDelete().addActionListener(this);
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
+        menu.getCountAll().addActionListener(this);
 
         if (!isAdmin) {
             menu.getInsert().setEnabled(false);
@@ -375,6 +378,30 @@ public class ControllerImplementation implements IController, ActionListener {
                 }
             }
             readAll.setVisible(true);
+        }
+    }
+
+    public void handleCountAll() {
+        try {
+            ArrayList<Person> s = dao.readAll();
+
+            if (s == null || s.isEmpty()) {
+                JOptionPane.showMessageDialog(menu,
+                        "There are no people registered yet.",
+                        "Count All - People v1.1.0",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                int total = s.size();
+                JOptionPane.showMessageDialog(menu,
+                        "Total number of people registered: " + total,
+                        "Count All - People v1.1.0",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu,
+                    "Error retrieving data: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -552,6 +579,20 @@ public class ControllerImplementation implements IController, ActionListener {
                 JOptionPane.showMessageDialog(menu, ex.getMessage() + " Closing application.", "Delete All - People v1.1.0", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
+        }
+    }
+
+    public void countAll() {
+        try {
+            ArrayList<Person> people = dao.readAll();
+            int total = (people != null) ? people.size() : 0;
+
+            JOptionPane.showMessageDialog(menu,
+                    "Total people registered: " + total,
+                    "Statistics",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu, "Error: " + ex.getMessage());
         }
     }
 
