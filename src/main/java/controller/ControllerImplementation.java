@@ -582,6 +582,7 @@ public class ControllerImplementation implements IController, ActionListener {
         }
     }
 
+    @Override
     public void countAll() {
         try {
             ArrayList<Person> people = dao.readAll();
