@@ -37,7 +37,8 @@ public class DAOSQL implements IDAO {
     private final String SQL_UPDATE = "UPDATE " + Routes.DB.getDbServerDB() + "." + Routes.DB.getDbServerTABLE() + " SET name = ?, dateOfBirth = ?, photo = ? WHERE (nif = ?);";
     private final String SQL_DELETE = "DELETE FROM " + Routes.DB.getDbServerDB() + "." + Routes.DB.getDbServerTABLE() + " WHERE (nif = ";
     private final String SQL_DELETE_ALL = "TRUNCATE " + Routes.DB.getDbServerDB() + "." + Routes.DB.getDbServerTABLE();
-
+    private final String SQL_COUNT = "SELECT COUNT(*) FROM " + Routes.DB.getDbServerDB() + "." + Routes.DB.getDbServerTABLE() + ";";
+    
     public Connection connect() throws SQLException {
         Connection conn;
         conn = DriverManager.getConnection(Routes.DB.getDbServerAddress() + Routes.DB.getDbServerComOpt(), Routes.DB.getDbServerUser(), Routes.DB.getDbServerPassword());
@@ -215,6 +216,30 @@ public class DAOSQL implements IDAO {
         File file = new File(Routes.DB.getFolderPhotos() + File.separator);
         for(File f : file.listFiles())
             f.delete();
+    }
+
+    @Override
+    public void countAll() throws Exception {
+        Connection conn = null;
+    Statement instruction = null;
+    ResultSet rs = null;
+    try {
+        conn = connect();
+        instruction = conn.createStatement();
+        rs = instruction.executeQuery(SQL_COUNT);
+        
+        if (rs.next()) {
+            int total = rs.getInt(1);
+            // In the DAO, we log the result or print it. 
+            // The Controller handles the GUI popup.
+            System.out.println("Total records in SQL Database: " + total);
+        }
+    } finally {
+        // Ensure resources are closed even if an exception occurs
+        if (rs != null) rs.close();
+        if (instruction != null) instruction.close();
+        if (conn != null) disconnect(conn);
+    }
     }
 
 }

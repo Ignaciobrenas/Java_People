@@ -46,4 +46,10 @@ public class DAOHashMap implements IDAO {
         return new ArrayList<>(people.values());
     }
 
+    @Override
+    public void countAll() throws Exception {
+        int total = people.size();
+        System.out.println("Total people in HashMap: " + total);
+    }
+
 }

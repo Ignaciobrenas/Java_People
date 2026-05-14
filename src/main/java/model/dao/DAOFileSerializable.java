@@ -60,7 +60,7 @@ public class DAOFileSerializable implements IDAO {
         ObjectInputStream ois = null;
         FileInputStream fIS = null;
         try {
-            
+
             fIS = new FileInputStream(Routes.FILES.getDataFile());
             ois = new ObjectInputStream(fIS);
             Person pr;
@@ -80,7 +80,7 @@ public class DAOFileSerializable implements IDAO {
                 fIS.close();
             }
         }
-        
+
         return people;
     }
 
@@ -102,7 +102,7 @@ public class DAOFileSerializable implements IDAO {
             //Do nothing
 //            System.out.println("El archivo está vacío y no se puede crear"
 //                    + "el objeto ObjectInputStream");
-        }finally {
+        } finally {
             if (ois != null) {
                 ois.close();
             }
@@ -167,9 +167,36 @@ public class DAOFileSerializable implements IDAO {
     }
 
     @Override
-    public void update(Person p) throws FileNotFoundException, IOException, ClassNotFoundException{
+    public void update(Person p) throws FileNotFoundException, IOException, ClassNotFoundException {
         delete(p);
         insert(p);
+    }
+
+    @Override
+    public void countAll() throws Exception {
+        int count = 0;
+        FileInputStream fIS = null;
+        ObjectInputStream ois = null;
+        try {
+            fIS = new FileInputStream(Routes.FILES.getDataFile());
+            ois = new ObjectInputStream(fIS);
+
+            while (ois.readObject() != null) {
+                count++;
+            }
+        } catch (java.io.EOFException ex) {
+            //Do nothing
+//            System.out.println("El archivo está vacío y no se puede crear"
+//                    + "el objeto ObjectInputStream");
+        } finally {
+            if (ois != null) {
+                ois.close();
+            }
+            if (fIS != null) {
+                fIS.close();
+            }
+        }
+        System.out.println("Total records: " + count);
     }
 
 }
