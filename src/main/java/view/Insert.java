@@ -22,6 +22,7 @@ import org.jdatepicker.JDatePicker;
 /**
  * Interface used to register a person. It is mandatory to enter at least the 
  * NIF and the name.
+ *
  * @author Francesc Perez
  * @version 1.1.0
  */
@@ -30,6 +31,15 @@ public class Insert extends javax.swing.JDialog {
     public Insert(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+//ingresa al boton, especificar que es el primero 
+        JButton dateButton = (JButton) dateOfBirth.getComponent(1);
+// colocar el texto
+        dateButton.setText("Select a date");
+//coloquemos el tamaño en nulo 
+        dateButton.setPreferredSize(null);
+        
+
         DropPhotoListener d = new DropPhotoListener(photo, this);
         DropTarget dropTarget = new DropTarget(photo, d);
         insert.setEnabled(false);
@@ -80,10 +90,10 @@ public class Insert extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         nif = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         dateOfBirth = new org.jdatepicker.JDatePicker();
         jLabel9 = new javax.swing.JLabel();
         email = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Insert - People v1.1.0");
@@ -172,6 +182,19 @@ public class Insert extends javax.swing.JDialog {
         jLabel8.setMaximumSize(new java.awt.Dimension(150, 22));
         jLabel8.setMinimumSize(new java.awt.Dimension(150, 22));
         jLabel8.setPreferredSize(new java.awt.Dimension(150, 22));
+
+        dateOfBirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateOfBirthActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 24);
+        getContentPane().add(dateOfBirth, gridBagConstraints);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 2, 8)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

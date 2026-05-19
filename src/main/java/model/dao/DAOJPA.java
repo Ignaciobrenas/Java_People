@@ -113,8 +113,9 @@ public class DAOJPA implements IDAO {
             pC.setEmail(p.getEmail());
             if(p.getPhoto() != null)
                 pC.setPhotoOnlyJPA(imageIconToBytes(p.getPhoto()));
-            else
+            } else {
                 pC.setPhotoOnlyJPA(null);
+            }
             em.getTransaction().commit();
         }
         em.close();
@@ -145,4 +146,11 @@ public class DAOJPA implements IDAO {
         em.getTransaction().commit();
     }
 
+    @Override
+    public void countAll() throws Exception {
+        EntityManager em = emf.createEntityManager();
+        Long count = em.createQuery("SELECT COUNT(p) FROM Person p", Long.class).getSingleResult();
+        System.out.println("Total records in JPA database: " + count);
+        em.close();
+    }
 }

@@ -66,6 +66,8 @@ public class ControllerImplementation implements IController, ActionListener {
     private Delete delete;
     private Update update;
     private ReadAll readAll;
+    private Boolean isAdmin;
+    private Boolean isUser;
 
     /**
      * This constructor allows the controller to know which data storage option
@@ -76,6 +78,8 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     public ControllerImplementation(DataStorageSelection dSS) {
         this.dSS = dSS;
+        this.isAdmin = true;
+        this.isUser = !isAdmin;
         ((JButton) (dSS.getAccept()[0])).addActionListener(this);
     }
 
@@ -120,19 +124,28 @@ public class ControllerImplementation implements IController, ActionListener {
             handleReadAll();
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
+        } else if (e.getSource() == menu.getCountAll()) {
+            handleCountAll();
         }
+
     }
 
     private void handleDataStorageSelection() {
         String daoSelected = ((javax.swing.JCheckBox) (dSS.getAccept()[1])).getText();
         dSS.dispose();
         switch (daoSelected) {
-            case ARRAY_LIST -> dao = new DAOArrayList();
-            case HASH_MAP -> dao = new DAOHashMap();
-            case FILE_NORMAL -> setupFileStorage();
-            case FILE_SERIALIZATION -> setupFileSerialization();
-            case SQL_DATABASE -> setupSQLDatabase();
-            case JPA -> setupJPADatabase();
+            case ARRAY_LIST ->
+                dao = new DAOArrayList();
+            case HASH_MAP ->
+                dao = new DAOHashMap();
+            case FILE_NORMAL ->
+                setupFileStorage();
+            case FILE_SERIALIZATION ->
+                setupFileSerialization();
+            case SQL_DATABASE ->
+                setupSQLDatabase();
+            case JPA ->
+                setupJPADatabase();
         }
         setupMenu();
     }
@@ -208,12 +221,21 @@ public class ControllerImplementation implements IController, ActionListener {
     private void setupMenu() {
         menu = new Menu();
         menu.setVisible(true);
+
         menu.getInsert().addActionListener(this);
         menu.getRead().addActionListener(this);
         menu.getUpdate().addActionListener(this);
         menu.getDelete().addActionListener(this);
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
+        menu.getCountAll().addActionListener(this);
+
+        if (!isAdmin) {
+            menu.getInsert().setEnabled(false);
+            menu.getUpdate().setEnabled(false);
+            menu.getDelete().setEnabled(false);
+            menu.getDeleteAll().setEnabled(false);
+        }
     }
 
     private void handleInsertAction() {
@@ -282,12 +304,12 @@ public class ControllerImplementation implements IController, ActionListener {
     public void handleDeletePerson() {
         if (delete != null) {
             Object[] options = {"Yes", "No"};
-            int answer = JOptionPane.showOptionDialog(delete,"Are you sure you want to delete this person?", "Delete - People v1.1.0",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                options,
-                options[1]
+            int answer = JOptionPane.showOptionDialog(delete, "Are you sure you want to delete this person?", "Delete - People v1.1.0",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    options,
+                    options[1]
             );
             if (answer == 0) {
                 Person p = new Person(delete.getNif().getText());
@@ -383,6 +405,30 @@ public class ControllerImplementation implements IController, ActionListener {
         }
     }
 
+    public void handleCountAll() {
+        try {
+            ArrayList<Person> s = dao.readAll();
+
+            if (s == null || s.isEmpty()) {
+                JOptionPane.showMessageDialog(menu,
+                        "There are no people registered yet.",
+                        "Count All - People v1.1.0",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                int total = s.size();
+                JOptionPane.showMessageDialog(menu,
+                        "Total number of people registered: " + total,
+                        "Count All - People v1.1.0",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu,
+                    "Error retrieving data: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public void handleDeleteAll() {
         Object[] options = {"Yes", "No"};
         //int answer = JOptionPane.showConfirmDialog(menu, "Are you sure to delete all people registered?", "Delete All - People v1.1.0", 0, 0);
@@ -444,6 +490,8 @@ public class ControllerImplementation implements IController, ActionListener {
     public void update(Person p) {
         try {
             dao.update(p);
+            JOptionPane.showMessageDialog(update, "Person updated succesfully!", "Update - People v.1.1.0", JOptionPane.INFORMATION_MESSAGE);
+
         } catch (Exception ex) {
             //Exceptions generated by file read/write access. If something goes 
             // wrong the application closes.
@@ -555,6 +603,21 @@ public class ControllerImplementation implements IController, ActionListener {
                 JOptionPane.showMessageDialog(menu, ex.getMessage() + " Closing application.", "Delete All - People v1.1.0", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
+        }
+    }
+
+    @Override
+    public void countAll() {
+        try {
+            ArrayList<Person> people = dao.readAll();
+            int total = (people != null) ? people.size() : 0;
+
+            JOptionPane.showMessageDialog(menu,
+                    "Total people registered: " + total,
+                    "Statistics",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu, "Error: " + ex.getMessage());
         }
     }
 
