@@ -111,7 +111,7 @@ public class DAOJPA implements IDAO {
             pC.setName(p.getName());
             pC.setDateOfBirth(p.getDateOfBirth());
             pC.setEmail(p.getEmail());
-            if(p.getPhoto() != null)
+            if(p.getPhoto() != null){
                 pC.setPhotoOnlyJPA(imageIconToBytes(p.getPhoto()));
             } else {
                 pC.setPhotoOnlyJPA(null);
@@ -124,7 +124,7 @@ public class DAOJPA implements IDAO {
     @Override
     public void delete(Person p) throws Exception {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE nif=: nifP", Person.class);
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE nif= :nifP", Person.class);
         query.setParameter("nifP", p.getNif());
         List<Person> personas = query.getResultList();
         em.getTransaction().begin();
