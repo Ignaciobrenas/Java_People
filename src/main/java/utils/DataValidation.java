@@ -5,7 +5,7 @@
 package utils;
 
 /**
- * @author Francesc Perez 
+ * @author Francesc Perez
  * @version 1.1.0
  */
 public class DataValidation {
@@ -27,4 +27,9 @@ public class DataValidation {
         return nifNoLetter + letter[Integer.parseInt(nifNoLetter)%23];
     }
 
+    //comprobar email
+    public static boolean checkEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&-]+(?:\\.[a-zA-Z0-9_+&-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
 }

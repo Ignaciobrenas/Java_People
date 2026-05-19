@@ -55,6 +55,9 @@ public class DAOFile implements IDAO {
                     photo = new ImageIcon(data[3]);
                 }
                 personToRead = new Person(data[0], data[1], date, photo);
+                if (data.length > 4 && !data[4].equals("null")) {
+                    personToRead.setEmail(data[4]);
+                }
                 break;
             }
             line = br.readLine();
@@ -83,7 +86,15 @@ public class DAOFile implements IDAO {
             if (!data[3].equals("null")) {
                 photo = new ImageIcon(data[3]);
             }
-            people.add(new Person(data[0], data[1], date, photo));
+            if (photo != null) {
+                people.add(new Person(data[0], data[1], date, photo));
+            } else {
+                people.add(new Person(data[0], data[1], date, null));
+            }
+            Person last = people.get(people.size() - 1);
+            if (data.length > 4 && !data[4].equals("null")) {
+                last.setEmail(data[4]);
+            }
             line = br.readLine();
         }
         br.close();
@@ -124,9 +135,9 @@ public class DAOFile implements IDAO {
             }
             outB.flush();
             outB.close();
-            bw.write(fileName + "\n");
+            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
         } else {
-            bw.write("null" + "\n");
+            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
         }
         bw.flush();
         bw.close();
@@ -149,7 +160,7 @@ public class DAOFile implements IDAO {
                 }
             } else {
                 textoNuevo += d[0] + "\t" + d[1] + "\t" + d[2] + "\t" + d[3]
-                        + "\n";
+                        + "\t" + (d.length > 4 ? d[4] : "null") + "\n";
             }
         }
         rafRW.setLength(0);
@@ -171,11 +182,6 @@ public class DAOFile implements IDAO {
     public void update(Person p) throws IOException {
         delete(p);
         insert(p);
-    }
-
-    @Override
-    public void countAll() throws Exception {
-        
     }
 
 }
