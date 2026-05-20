@@ -18,4 +18,5 @@ public interface IController {
     public abstract void start();
     public abstract void deleteAll();
     public abstract boolean login(String username, String password);
+    public abstract void countAll();
 }

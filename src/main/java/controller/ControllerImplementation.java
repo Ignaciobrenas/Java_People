@@ -2,6 +2,7 @@ package controller;
 
 import model.entity.Person;
 import model.entity.PersonException;
+import utils.DataValidation;
 import model.dao.DAOArrayList;
 import model.dao.DAOFile;
 import model.dao.DAOFileSerializable;
@@ -79,7 +80,7 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     public ControllerImplementation(DataStorageSelection dSS) {
         this.dSS = dSS;
-        this.isAdmin = false;
+        this.isAdmin = true;
         this.isUser = !isAdmin;
         ((JButton) (dSS.getAccept()[0])).addActionListener(this);
     }
@@ -142,6 +143,8 @@ public class ControllerImplementation implements IController, ActionListener {
             handleReadAll();
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
+        } else if (e.getSource() == menu.getCountAll()) {
+            handleCountAll();
         }
 
     }
@@ -248,7 +251,8 @@ public class ControllerImplementation implements IController, ActionListener {
                         + "nif varchar(9) primary key not null, "
                         + "name varchar(50), "
                         + "dateOfBirth DATE, "
-                        + "photo varchar(200) );");
+                        + "photo varchar(200), "
+                        + "email varchar(100) );");
                 stmt.close();
                 conn.close();
             }
@@ -282,6 +286,7 @@ public class ControllerImplementation implements IController, ActionListener {
         menu.getDelete().addActionListener(this);
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
+        menu.getCountAll().addActionListener(this);
 
         if (!isAdmin) {
             menu.getInsert().setEnabled(false);
@@ -298,7 +303,30 @@ public class ControllerImplementation implements IController, ActionListener {
     }
 
     private void handleInsertPerson() {
-        Person p = new Person(insert.getNam().getText(), insert.getNif().getText());
+        String emailText = insert.getEmail().getText().trim();
+        if (emailText.equals("Enter email")) {
+            emailText = "";
+        }
+        //mensaje de error de email no correcto
+        if (!emailText.isEmpty() && !DataValidation.checkEmail(emailText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid email format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String nameText = insert.getNam().getText().trim();
+        if (nameText.equals("Enter full name")) {
+            nameText = "";
+        }
+        
+        String nifText = insert.getNif().getText().trim();
+        if (nifText.equals("Enter NIF number, letter is calculated (e.g., 12345678)")) {
+            nifText = "";
+        }
+        
+        Person p = new Person(nameText, nifText);
+        if (!emailText.isEmpty()) {
+            p.setEmail(emailText);
+        }
         if (insert.getDateOfBirth().getModel().getValue() != null) {
             p.setDateOfBirth(((GregorianCalendar) insert.getDateOfBirth().getModel().getValue()).getTime());
         }
@@ -320,6 +348,7 @@ public class ControllerImplementation implements IController, ActionListener {
         Person pNew = read(p);
         if (pNew != null) {
             read.getNam().setText(pNew.getName());
+            read.getEmail().setText(pNew.getEmail() != null ? pNew.getEmail() : "");
             if (pNew.getDateOfBirth() != null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(pNew.getDateOfBirth());
@@ -377,7 +406,11 @@ public class ControllerImplementation implements IController, ActionListener {
                 update.getDateOfBirth().setEnabled(true);
                 update.getPhoto().setEnabled(true);
                 update.getUpdate().setEnabled(true);
+                update.getEmail().setEnabled(true);
                 update.getNam().setText(pNew.getName());
+                if (pNew.getEmail() != null) {
+                    update.getEmail().setText(pNew.getEmail());
+                }
                 if (pNew.getDateOfBirth() != null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(pNew.getDateOfBirth());
@@ -398,7 +431,13 @@ public class ControllerImplementation implements IController, ActionListener {
 
     public void handleUpdatePerson() {
         if (update != null) {
-            Person p = new Person(update.getNam().getText(), update.getNif().getText());
+            String emailText = update.getEmail().getText().trim();
+            if (!emailText.isEmpty() && !DataValidation.checkEmail(emailText)) {
+                JOptionPane.showMessageDialog(update, "Invalid email format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            Person p = new Person(update.getNif().getText(), update.getNam().getText(), emailText);
             if ((update.getDateOfBirth().getModel().getValue()) != null) {
                 p.setDateOfBirth(((GregorianCalendar) update.getDateOfBirth().getModel().getValue()).getTime());
             }
@@ -431,8 +470,33 @@ public class ControllerImplementation implements IController, ActionListener {
                 } else {
                     model.setValueAt("no", i, 3);
                 }
+                model.setValueAt(s.get(i).getEmail() != null ? s.get(i).getEmail() : "", i, 4);
             }
             readAll.setVisible(true);
+        }
+    }
+
+    public void handleCountAll() {
+        try {
+            ArrayList<Person> s = dao.readAll();
+
+            if (s == null || s.isEmpty()) {
+                JOptionPane.showMessageDialog(menu,
+                        "There are no people registered yet.",
+                        "Count All - People v1.1.0",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                int total = s.size();
+                JOptionPane.showMessageDialog(menu,
+                        "Total number of people registered: " + total,
+                        "Count All - People v1.1.0",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu,
+                    "Error retrieving data: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -440,21 +504,21 @@ public class ControllerImplementation implements IController, ActionListener {
         Object[] options = {"Yes", "No"};
         //int answer = JOptionPane.showConfirmDialog(menu, "Are you sure to delete all people registered?", "Delete All - People v1.1.0", 0, 0);
         int answer = JOptionPane.showOptionDialog(
-                menu,
-                "Are you sure you want to delete all registered people?",
-                "Delete All - People v1.1.0",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                options,
-                options[1] // Default selection is "No"
-        );
+        menu,
+        "Are you sure you want to delete all registered people?", 
+        "Delete All - People v1.1.0",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.WARNING_MESSAGE,
+        null,
+        options,
+        options[1] // Default selection is "No"
+    );
 
         if (answer == 0) {
             deleteAll();
         }
     }
-
+    
     /**
      * This function inserts the Person object with the requested NIF, if it
      * doesn't exist. If there is any access problem with the storage device,
@@ -610,6 +674,20 @@ public class ControllerImplementation implements IController, ActionListener {
                 JOptionPane.showMessageDialog(menu, ex.getMessage() + " Closing application.", "Delete All - People v1.1.0", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
+        }
+    }
+    @Override
+    public void countAll() {
+        try {
+            ArrayList<Person> people = dao.readAll();
+            int total = (people != null) ? people.size() : 0;
+
+            JOptionPane.showMessageDialog(menu,
+                    "Total people registered: " + total,
+                    "Statistics",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(menu, "Error: " + ex.getMessage());
         }
     }
 }

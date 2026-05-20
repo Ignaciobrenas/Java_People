@@ -172,4 +172,8 @@ public class DAOFileSerializable implements IDAO {
         insert(p);
     }
 
+    @Override
+    public void countAll() throws Exception {
+    }
+
 }

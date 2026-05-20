@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
  * functions so that they can work with files. User data is saved in the
  * "dataFile.txt" file and the associated photos, if any, are saved with the
  * name NIF.png in the "Photos" folder.
+ *
  * @author Francesc Perez
  * @version 1.1.0
  */
@@ -55,6 +56,9 @@ public class DAOFile implements IDAO {
                     photo = new ImageIcon(data[3]);
                 }
                 personToRead = new Person(data[0], data[1], date, photo);
+                if (data.length > 4 && !data[4].equals("null")) {
+                    personToRead.setEmail(data[4]);
+                }
                 break;
             }
             line = br.readLine();
@@ -62,7 +66,7 @@ public class DAOFile implements IDAO {
         br.close();
         return personToRead;
     }
-    
+
     @Override
     public ArrayList<Person> readAll() throws FileNotFoundException, IOException, ParseException {
         ArrayList<Person> people = new ArrayList<>();
@@ -83,7 +87,15 @@ public class DAOFile implements IDAO {
             if (!data[3].equals("null")) {
                 photo = new ImageIcon(data[3]);
             }
-            people.add(new Person(data[0], data[1], date, photo));
+            if (photo != null) {
+                people.add(new Person(data[0], data[1], date, photo));
+            } else {
+                people.add(new Person(data[0], data[1], date, null));
+            }
+            Person last = people.get(people.size() - 1);
+            if (data.length > 4 && !data[4].equals("null")) {
+                last.setEmail(data[4]);
+            }
             line = br.readLine();
         }
         br.close();
@@ -107,7 +119,7 @@ public class DAOFile implements IDAO {
         if (p.getPhoto() != null) {
             FileOutputStream out;
             BufferedOutputStream outB;
-            String fileName = Routes.FILE.getFolderPhotos() + sep + p.getNif() + ".png";         
+            String fileName = Routes.FILE.getFolderPhotos() + sep + p.getNif() + ".png";
             out = new FileOutputStream(fileName);
             outB = new BufferedOutputStream(out);
             BufferedImage bi = new BufferedImage(p.getPhoto().getImage().getWidth(null),
@@ -124,9 +136,9 @@ public class DAOFile implements IDAO {
             }
             outB.flush();
             outB.close();
-            bw.write(fileName + "\n");
+            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
         } else {
-            bw.write("null" + "\n");
+            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
         }
         bw.flush();
         bw.close();
@@ -149,7 +161,7 @@ public class DAOFile implements IDAO {
                 }
             } else {
                 textoNuevo += d[0] + "\t" + d[1] + "\t" + d[2] + "\t" + d[3]
-                        + "\n";
+                        + "\t" + (d.length > 4 ? d[4] : "null") + "\n";
             }
         }
         rafRW.setLength(0);
@@ -163,14 +175,20 @@ public class DAOFile implements IDAO {
         file.delete();
         file.createNewFile();
         file = new File(Routes.FILE.getFolderPhotos());
-        for(File f : file.listFiles())
+        for (File f : file.listFiles()) {
             f.delete();
+        }
     }
-    
+
     @Override
     public void update(Person p) throws IOException {
         delete(p);
         insert(p);
     }
 
+    @Override
+    public void countAll() throws Exception {
+        ArrayList<Person> people = readAll();
+        System.out.println("Total records: " + people.size());
+    }
 }

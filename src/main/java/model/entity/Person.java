@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
 import javax.swing.ImageIcon;
+import javax.swing.JTextField;
 
 /**
  * Encapsulated class that defines the type of entity that will manage the application.
@@ -21,6 +22,8 @@ public class Person implements Serializable{
     private String nif;
     private String name;
     private Date dateOfBirth;
+    private String email;
+    
     @Transient
     private ImageIcon photo;
     @Lob
@@ -37,6 +40,15 @@ public class Person implements Serializable{
     public Person(String nif) {
         this.nif = nif;
     }
+
+    public Person(String nif, String name, Date dateOfBirth, String email, ImageIcon photo, byte[] photoOnlyJPA) {
+        this.nif = nif;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.photo = photo;
+        this.photoOnlyJPA = photoOnlyJPA;
+    }
     
     /**
      * Constructor with mandatory data.
@@ -48,6 +60,13 @@ public class Person implements Serializable{
         this.nif = nif;
     }
 
+    public Person(String nif, String name, String email) {
+        this.nif = nif;
+        this.name = name;
+        this.email = email;
+    }
+
+    
     /**
      * Constructor with all data
      * @author Fran Perez
@@ -104,7 +123,17 @@ public class Person implements Serializable{
     public void setPhotoOnlyJPA(byte[] photoOnlyJPA) {
         this.photoOnlyJPA = photoOnlyJPA;
     }
+
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
         
+    
     /**
      * Function used to compare two Personas. There cannot be two or more people
      * with the same ID. Actually it isn't used in this project.
