@@ -45,6 +45,7 @@ import static utils.DataConstants.FILE_SERIALIZATION;
 import static utils.DataConstants.HASH_MAP;
 import static utils.DataConstants.JPA;
 import static utils.DataConstants.SQL_DATABASE;
+import view.Login;
 
 /**
  * This class starts the visual part of the application and programs and manages
@@ -60,6 +61,7 @@ public class ControllerImplementation implements IController, ActionListener {
     //accessed from the Controller.
     private final DataStorageSelection dSS;
     private IDAO dao;
+    private Login login;
     private Menu menu;
     private Insert insert;
     private Read read;
@@ -101,10 +103,27 @@ public class ControllerImplementation implements IController, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == dSS.getAccept()[0]) {
+            System.out.println("10");
             handleDataStorageSelection();
-        } else if (e.getSource() == menu.getInsert()) {
+            return;
+        }
+
+        if (login != null) {
+            if (e.getSource() == login.getLoginButton()) {
+                System.out.println("20");
+                handleLoginAction();
+                return;
+            } else if (e.getSource() == login.getResetButton()) {
+                System.out.println("30");
+                login.clearFields();
+                return;
+            }
+        }
+        if (e.getSource() == menu.getInsert()) {
+            System.out.println("50");
             handleInsertAction();
         } else if (insert != null && e.getSource() == insert.getInsert()) {
+            System.out.println("60");
             handleInsertPerson();
         } else if (e.getSource() == menu.getRead()) {
             handleReadAction();
@@ -147,7 +166,46 @@ public class ControllerImplementation implements IController, ActionListener {
             case JPA ->
                 setupJPADatabase();
         }
-        setupMenu();
+        setupLogin();
+    }
+
+    private void setupLogin() {
+        login = new Login();
+        login.getLoginButton().addActionListener(this);
+        login.getResetButton().addActionListener(this);
+        login.setVisible(true);
+    }
+
+    private void handleLoginAction() {
+        String username = login.getUser();
+        String password = login.getPassword();
+        if (login(username, password)) {
+            if (isAdmin) {
+                JOptionPane.showMessageDialog(login, "Welcome Admin!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(login, "Welcome User!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+            login.dispose();
+            setupMenu();
+        } else {
+            JOptionPane.showMessageDialog(login, "Invalid credentials or empty fields.", "Login Error", JOptionPane.ERROR_MESSAGE);
+            login.clearFields();
+        }
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        if (username.equals("admin") && password.equals("12345678")) {
+            this.isAdmin = true;
+            this.isUser = false;
+            return true;
+        } else if (!username.isEmpty() && !password.isEmpty()) {
+            this.isAdmin = false;
+            this.isUser = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void setupFileStorage() {
@@ -618,7 +676,6 @@ public class ControllerImplementation implements IController, ActionListener {
             }
         }
     }
-
     @Override
     public void countAll() {
         try {
@@ -633,5 +690,4 @@ public class ControllerImplementation implements IController, ActionListener {
             JOptionPane.showMessageDialog(menu, "Error: " + ex.getMessage());
         }
     }
-
 }
