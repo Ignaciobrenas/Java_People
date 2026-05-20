@@ -32,11 +32,57 @@ public class Insert extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         
-//ingresa al boton, especificar que es el primero 
+        // Add focus listeners for placeholder behavior
+        name.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (name.getText().equals("Enter full name")) {
+                    name.setText("");
+                }
+            }
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (name.getText().trim().isEmpty()) {
+                    name.setText("Enter full name");
+                }
+            }
+        });
+
+        nif.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (nif.getText().equals("Enter NIF number, letter is calculated (e.g., 12345678)")) {
+                    nif.setText("");
+                }
+            }
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (nif.getText().trim().isEmpty()) {
+                    nif.setText("Enter NIF number, letter is calculated (e.g., 12345678)");
+                }
+            }
+        });
+
+        email.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (email.getText().equals("Enter email")) {
+                    email.setText("");
+                }
+            }
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (email.getText().trim().isEmpty()) {
+                    email.setText("Enter email");
+                }
+            }
+        });
+        
+        //ingresa al boton, especificar que es el primero 
         JButton dateButton = (JButton) dateOfBirth.getComponent(1);
-// colocar el texto
+        // colocar el texto
         dateButton.setText("Select a date");
-//coloquemos el tamaño en nulo 
+        //coloquemos el tamaño en nulo 
         dateButton.setPreferredSize(null);
         
 
@@ -319,7 +365,11 @@ public class Insert extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void showInsert() {
-        if (!name.getText().isEmpty() && !nif.isEditable()) {
+        String nameText = name.getText().trim();
+        String nifText = nif.getText().trim();
+        boolean hasValidName = !nameText.isEmpty() && !nameText.equals("Enter full name");
+        boolean hasValidNif = !nifText.isEmpty() && !nifText.equals("Enter NIF number, letter is calculated (e.g., 12345678)") && !nif.isEditable();
+        if (hasValidName && hasValidNif) {
             insert.setEnabled(true);
         } else {
             insert.setEnabled(false);
@@ -328,10 +378,11 @@ public class Insert extends javax.swing.JDialog {
 
     private void resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetActionPerformed
         nif.setEditable(true);
-        nif.setText("");
-        name.setText("");
+        nif.setText("Enter NIF number, letter is calculated (e.g., 12345678)");
+        name.setText("Enter full name");
         photo.setIcon(null);
-        email.setText("");
+        email.setText("Enter email");
+        email.setBackground(java.awt.Color.WHITE);
         email.setToolTipText(null);
         //We reset the calendar date to the current date ...
         LocalDate dateLocate = LocalDate.now();
@@ -395,17 +446,26 @@ public class Insert extends javax.swing.JDialog {
     private void emailKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyTyped
         javax.swing.SwingUtilities.invokeLater(() -> {
             String text = email.getText().trim();
-            if (text.isEmpty()) {
+            if (text.isEmpty() || text.equals("Enter email")) {
                 email.setBackground(java.awt.Color.WHITE);
                 email.setToolTipText(null);
             } else if (DataValidation.checkEmail(text)) {
+                email.setBackground(new java.awt.Color(198, 239, 206)); // light green
                 email.setToolTipText("Valid email format.");
             } else {
-  
+                email.setBackground(new java.awt.Color(255, 199, 206)); // light red
                 email.setToolTipText("Invalid email format.");
             }
         });
     }//GEN-LAST:event_emailKeyTyped
+
+    private void insertActionPerformed(java.awt.event.ActionEvent evt) {
+        // Handled by ControllerImplementation
+    }
+
+    private void dateOfBirthActionPerformed(java.awt.event.ActionEvent evt) {
+        // Handled if necessary, or empty
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdatepicker.JDatePicker dateOfBirth;

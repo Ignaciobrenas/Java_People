@@ -246,13 +246,26 @@ public class ControllerImplementation implements IController, ActionListener {
 
     private void handleInsertPerson() {
         String emailText = insert.getEmail().getText().trim();
+        if (emailText.equals("Enter email")) {
+            emailText = "";
+        }
         //mensaje de error de email no correcto
         if (!emailText.isEmpty() && !DataValidation.checkEmail(emailText)) {
             JOptionPane.showMessageDialog(insert, "Invalid email format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        Person p = new Person(insert.getNam().getText(), insert.getNif().getText());
+        String nameText = insert.getNam().getText().trim();
+        if (nameText.equals("Enter full name")) {
+            nameText = "";
+        }
+        
+        String nifText = insert.getNif().getText().trim();
+        if (nifText.equals("Enter NIF number, letter is calculated (e.g., 12345678)")) {
+            nifText = "";
+        }
+        
+        Person p = new Person(nameText, nifText);
         if (!emailText.isEmpty()) {
             p.setEmail(emailText);
         }
