@@ -252,7 +252,8 @@ public class ControllerImplementation implements IController, ActionListener {
                         + "name varchar(50), "
                         + "dateOfBirth DATE, "
                         + "photo varchar(200), "
-                        + "email varchar(100) );");
+                        + "email varchar(100), "
+                        + "phoneNumber varchar(20) );");
                 stmt.close();
                 conn.close();
             }
@@ -323,9 +324,21 @@ public class ControllerImplementation implements IController, ActionListener {
             nifText = "";
         }
         
+        String phoneText = insert.getPhoneNumber1().getText().trim();
+        if (phoneText.equals("Enter phone Number")) {
+            phoneText = "";
+        }
+        if (!phoneText.isEmpty() && !DataValidation.checkPhoneNumber(phoneText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid phone number format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         Person p = new Person(nameText, nifText);
         if (!emailText.isEmpty()) {
             p.setEmail(emailText);
+        }
+        if (!phoneText.isEmpty()) {
+            p.setPhoneNumber(phoneText);
         }
         if (insert.getDateOfBirth().getModel().getValue() != null) {
             p.setDateOfBirth(((GregorianCalendar) insert.getDateOfBirth().getModel().getValue()).getTime());
@@ -349,6 +362,7 @@ public class ControllerImplementation implements IController, ActionListener {
         if (pNew != null) {
             read.getNam().setText(pNew.getName());
             read.getEmail().setText(pNew.getEmail() != null ? pNew.getEmail() : "");
+            read.getPhoneNumber1().setText(pNew.getPhoneNumber() != null ? pNew.getPhoneNumber() : "");
             if (pNew.getDateOfBirth() != null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(pNew.getDateOfBirth());
@@ -407,9 +421,15 @@ public class ControllerImplementation implements IController, ActionListener {
                 update.getPhoto().setEnabled(true);
                 update.getUpdate().setEnabled(true);
                 update.getEmail().setEnabled(true);
+                update.getPhoneNumber1().setEnabled(true);
                 update.getNam().setText(pNew.getName());
                 if (pNew.getEmail() != null) {
                     update.getEmail().setText(pNew.getEmail());
+                }
+                if (pNew.getPhoneNumber() != null) {
+                    update.getPhoneNumber1().setText(pNew.getPhoneNumber());
+                } else {
+                    update.getPhoneNumber1().setText("");
                 }
                 if (pNew.getDateOfBirth() != null) {
                     Calendar calendar = Calendar.getInstance();
@@ -437,7 +457,14 @@ public class ControllerImplementation implements IController, ActionListener {
                 return;
             }
             
+            String phoneText = update.getPhoneNumber1().getText().trim();
+            if (!phoneText.isEmpty() && !DataValidation.checkPhoneNumber(phoneText)) {
+                JOptionPane.showMessageDialog(update, "Invalid phone number format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
             Person p = new Person(update.getNif().getText(), update.getNam().getText(), emailText);
+            p.setPhoneNumber(phoneText);
             if ((update.getDateOfBirth().getModel().getValue()) != null) {
                 p.setDateOfBirth(((GregorianCalendar) update.getDateOfBirth().getModel().getValue()).getTime());
             }
@@ -471,6 +498,7 @@ public class ControllerImplementation implements IController, ActionListener {
                     model.setValueAt("no", i, 3);
                 }
                 model.setValueAt(s.get(i).getEmail() != null ? s.get(i).getEmail() : "", i, 4);
+                model.setValueAt(s.get(i).getPhoneNumber() != null ? s.get(i).getPhoneNumber() : "", i, 5);
             }
             readAll.setVisible(true);
         }
