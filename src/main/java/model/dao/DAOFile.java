@@ -59,6 +59,9 @@ public class DAOFile implements IDAO {
                 if (data.length > 4 && !data[4].equals("null")) {
                     personToRead.setEmail(data[4]);
                 }
+                if (data.length > 5 && !data[5].equals("null")) {
+                    personToRead.setPhoneNumber(data[5]);
+                }
                 break;
             }
             line = br.readLine();
@@ -95,6 +98,9 @@ public class DAOFile implements IDAO {
             Person last = people.get(people.size() - 1);
             if (data.length > 4 && !data[4].equals("null")) {
                 last.setEmail(data[4]);
+            }
+            if (data.length > 5 && !data[5].equals("null")) {
+                last.setPhoneNumber(data[5]);
             }
             line = br.readLine();
         }
@@ -136,9 +142,9 @@ public class DAOFile implements IDAO {
             }
             outB.flush();
             outB.close();
-            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
+            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\n");
         } else {
-            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\n");
+            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\n");
         }
         bw.flush();
         bw.close();
@@ -161,7 +167,8 @@ public class DAOFile implements IDAO {
                 }
             } else {
                 textoNuevo += d[0] + "\t" + d[1] + "\t" + d[2] + "\t" + d[3]
-                        + "\t" + (d.length > 4 ? d[4] : "null") + "\n";
+                        + "\t" + (d.length > 4 ? d[4] : "null")
+                        + "\t" + (d.length > 5 ? d[5] : "null") + "\n";
             }
         }
         rafRW.setLength(0);

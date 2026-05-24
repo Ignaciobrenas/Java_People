@@ -32,4 +32,10 @@ public class DataValidation {
         String emailRegex = "^[a-zA-Z0-9_+&-]+(?:\\.[a-zA-Z0-9_+&-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
     }
+
+    // comprobar telefono
+    public static boolean checkPhoneNumber(String phoneNumber) {
+        String phoneRegex = "^\\+?[0-9]{1,4}?[-.\\s]?\\(?\\d{1,3}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$";
+        return phoneNumber.matches(phoneRegex);
+    }
 }

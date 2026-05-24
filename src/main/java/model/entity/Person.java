@@ -23,6 +23,7 @@ public class Person implements Serializable{
     private String name;
     private Date dateOfBirth;
     private String email;
+    private String phoneNumber;
     
     @Transient
     private ImageIcon photo;
@@ -133,6 +134,13 @@ public class Person implements Serializable{
         this.email = email;
     }
         
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
     
     /**
      * Function used to compare two Personas. There cannot be two or more people
@@ -176,7 +184,7 @@ public class Person implements Serializable{
     @Override
     public String toString() {
         return "Person {" + "Name = " + name + ", NIF = " + nif
-                + ", DateOfBirth = " + dateOfBirth + ", Photo = " + (photo!=null) + "}";
+                + ", DateOfBirth = " + dateOfBirth + ", Photo = " + (photo!=null) + ", Email = " + email + ", PhoneNumber = " + phoneNumber + "}";
     }
 
 }
