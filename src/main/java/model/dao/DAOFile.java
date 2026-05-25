@@ -62,6 +62,9 @@ public class DAOFile implements IDAO {
                 if (data.length > 5 && !data[5].equals("null")) {
                     personToRead.setPhoneNumber(data[5]);
                 }
+                if (data.length > 6 && !data[6].equals("null")) {
+                    personToRead.setPostalCode(data[6]);
+                }
                 break;
             }
             line = br.readLine();
@@ -101,6 +104,9 @@ public class DAOFile implements IDAO {
             }
             if (data.length > 5 && !data[5].equals("null")) {
                 last.setPhoneNumber(data[5]);
+            }
+            if (data.length > 6 && !data[6].equals("null")) {
+                last.setPostalCode(data[6]);
             }
             line = br.readLine();
         }
@@ -142,9 +148,9 @@ public class DAOFile implements IDAO {
             }
             outB.flush();
             outB.close();
-            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\n");
+            bw.write(fileName + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\t" + (p.getPostalCode() != null ? p.getPostalCode() : "null") + "\n");
         } else {
-            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\n");
+            bw.write("null" + "\t" + (p.getEmail() != null ? p.getEmail() : "null") + "\t" + (p.getPhoneNumber() != null ? p.getPhoneNumber() : "null") + "\t" + (p.getPostalCode() != null ? p.getPostalCode() : "null") + "\n");
         }
         bw.flush();
         bw.close();
@@ -168,7 +174,8 @@ public class DAOFile implements IDAO {
             } else {
                 textoNuevo += d[0] + "\t" + d[1] + "\t" + d[2] + "\t" + d[3]
                         + "\t" + (d.length > 4 ? d[4] : "null")
-                        + "\t" + (d.length > 5 ? d[5] : "null") + "\n";
+                        + "\t" + (d.length > 5 ? d[5] : "null")
+                        + "\t" + (d.length > 6 ? d[6] : "null") + "\n";
             }
         }
         rafRW.setLength(0);
