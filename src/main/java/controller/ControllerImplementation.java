@@ -49,6 +49,7 @@ import static utils.DataConstants.HASH_MAP;
 import static utils.DataConstants.JPA;
 import static utils.DataConstants.SQL_DATABASE;
 import view.Login;
+import model.entity.User;
 
 /**
  * This class starts the visual part of the application and programs and manages
@@ -72,7 +73,8 @@ public class ControllerImplementation implements IController, ActionListener {
     private Update update;
     private ReadAll readAll;
     private Boolean isAdmin;
-    private Boolean isUser;
+    private final ArrayList<User> users = new ArrayList<>();
+    private User loggedUser;
 
     /**
      * This constructor allows the controller to know which data storage option
@@ -83,8 +85,9 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     public ControllerImplementation(DataStorageSelection dSS) {
         this.dSS = dSS;
-        this.isAdmin = true;
-        this.isUser = !isAdmin;
+        this.isAdmin = false;
+        users.add(new User("admin", "admin", "12345678"));
+        users.add(new User("employee", "user", "87654321"));
         ((JButton) (dSS.getAccept()[0])).addActionListener(this);
     }
 
@@ -231,17 +234,16 @@ public class ControllerImplementation implements IController, ActionListener {
 
     @Override
     public boolean login(String username, String password) {
-        if (username.equalsIgnoreCase("admin") && password.equals("12345678")) {
-            this.isAdmin = true;
-            this.isUser = false;
-            return true;
-        } else if (username.equalsIgnoreCase("user") && password.equals("87654321")) {
-            this.isAdmin = false;
-            this.isUser = true;
-            return true;
-        } else {
-            return false;
+        for (User u : users) {
+            if (u.getUser().equalsIgnoreCase(username) && u.getPassword().equals(password)) {
+                this.loggedUser = u;
+                this.isAdmin = "admin".equalsIgnoreCase(u.getRol());
+                return true;
+            }
         }
+        this.loggedUser = null;
+        this.isAdmin = false;
+        return false;
     }
 
     private void setupFileStorage() {
@@ -325,12 +327,14 @@ public class ControllerImplementation implements IController, ActionListener {
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
         menu.getCountAll().addActionListener(this);
-
         if (!isAdmin) {
-            menu.getInsert().setEnabled(false);
-            menu.getUpdate().setEnabled(false);
-            menu.getDelete().setEnabled(false);
-            menu.getDeleteAll().setEnabled(false);
+            menu.getContentPane().remove(menu.getInsert());
+            menu.getContentPane().remove(menu.getUpdate());
+            menu.getContentPane().remove(menu.getDelete());
+            menu.getContentPane().remove(menu.getDeleteAll());
+            menu.revalidate();
+            menu.repaint();
+            menu.pack();
         }
     }
 
@@ -635,7 +639,7 @@ public class ControllerImplementation implements IController, ActionListener {
                     || ex instanceof ParseException || ex instanceof ClassNotFoundException
                     || ex instanceof SQLException || ex instanceof PersistenceException) {
                 JOptionPane.showMessageDialog(insert, ex.getMessage() + ex.getClass() + " Closing application.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
-                System.exit(0);     
+                System.exit(0);
             }
             if (ex instanceof PersonException) {
                 JOptionPane.showMessageDialog(insert, ex.getMessage(), insert.getTitle(), JOptionPane.WARNING_MESSAGE);
