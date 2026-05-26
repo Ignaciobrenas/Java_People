@@ -29,12 +29,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.persistence.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.DateModel;
@@ -145,6 +148,39 @@ public class ControllerImplementation implements IController, ActionListener {
             handleDeleteAll();
         } else if (e.getSource() == menu.getCountAll()) {
             handleCountAll();
+        } else if (readAll != null && e.getSource() == readAll.getExport()) {
+            try {
+                handleExportCSV();
+            } catch (IOException ex) {
+                System.getLogger(ControllerImplementation.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
+        }
+    }
+
+    private void handleExportCSV() throws IOException {
+
+        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
+        String fileName = "people_data_" + date + ".csv";
+
+        JFileChooser fileChooser = new JFileChooser();
+
+        fileChooser.setSelectedFile(new File(fileName));
+
+        int result = fileChooser.showSaveDialog(readAll);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            File selectedFile = fileChooser.getSelectedFile();
+
+            ArrayList<Person> people = readAll();
+
+            new DAOFile().exportCSV(people, selectedFile);
+            JOptionPane.showMessageDialog(readAll,
+                    "Datos exportados exitosamente como " + selectedFile.getName(),
+                    "Export CSV",
+                    JOptionPane.INFORMATION_MESSAGE);
+
         }
 
     }
@@ -314,17 +350,17 @@ public class ControllerImplementation implements IController, ActionListener {
             JOptionPane.showMessageDialog(insert, "Invalid email format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         String nameText = insert.getNam().getText().trim();
         if (nameText.equals("Enter full name")) {
             nameText = "";
         }
-        
+
         String nifText = insert.getNif().getText().trim();
         if (nifText.equals("Enter NIF number, letter is calculated (e.g., 12345678)")) {
             nifText = "";
         }
-        
+
         String phoneText = insert.getPhoneNumber1().getText().trim();
         if (phoneText.equals("Enter phone Number")) {
             phoneText = "";
@@ -342,7 +378,7 @@ public class ControllerImplementation implements IController, ActionListener {
             JOptionPane.showMessageDialog(insert, "Invalid postal code format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         Person p = new Person(nameText, nifText);
         if (!emailText.isEmpty()) {
             p.setEmail(emailText);
@@ -476,7 +512,7 @@ public class ControllerImplementation implements IController, ActionListener {
                 JOptionPane.showMessageDialog(update, "Invalid email format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             String phoneText = update.getPhoneNumber1().getText().trim();
             if (!phoneText.isEmpty() && !DataValidation.checkPhoneNumber(phoneText)) {
                 JOptionPane.showMessageDialog(update, "Invalid phone number format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
@@ -488,7 +524,7 @@ public class ControllerImplementation implements IController, ActionListener {
                 JOptionPane.showMessageDialog(update, "Invalid postal code format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             Person p = new Person(update.getNif().getText(), update.getNam().getText(), emailText);
             p.setPhoneNumber(phoneText);
             p.setPostalCode(postalText);
@@ -509,6 +545,7 @@ public class ControllerImplementation implements IController, ActionListener {
             JOptionPane.showMessageDialog(menu, "There are not people registered yet.", "Read All - People v1.1.0", JOptionPane.WARNING_MESSAGE);
         } else {
             readAll = new ReadAll(menu, true);
+            readAll.getExport().addActionListener(this);
             DefaultTableModel model = (DefaultTableModel) readAll.getTable().getModel();
             for (int i = 0; i < s.size(); i++) {
                 model.addRow(new Object[i]);
@@ -560,21 +597,21 @@ public class ControllerImplementation implements IController, ActionListener {
         Object[] options = {"Yes", "No"};
         //int answer = JOptionPane.showConfirmDialog(menu, "Are you sure to delete all people registered?", "Delete All - People v1.1.0", 0, 0);
         int answer = JOptionPane.showOptionDialog(
-        menu,
-        "Are you sure you want to delete all registered people?", 
-        "Delete All - People v1.1.0",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.WARNING_MESSAGE,
-        null,
-        options,
-        options[1] // Default selection is "No"
-    );
+                menu,
+                "Are you sure you want to delete all registered people?",
+                "Delete All - People v1.1.0",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[1] // Default selection is "No"
+        );
 
         if (answer == 0) {
             deleteAll();
         }
     }
-    
+
     /**
      * This function inserts the Person object with the requested NIF, if it
      * doesn't exist. If there is any access problem with the storage device,
@@ -598,7 +635,7 @@ public class ControllerImplementation implements IController, ActionListener {
                     || ex instanceof ParseException || ex instanceof ClassNotFoundException
                     || ex instanceof SQLException || ex instanceof PersistenceException) {
                 JOptionPane.showMessageDialog(insert, ex.getMessage() + ex.getClass() + " Closing application.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
+                System.exit(0);     
             }
             if (ex instanceof PersonException) {
                 JOptionPane.showMessageDialog(insert, ex.getMessage(), insert.getTitle(), JOptionPane.WARNING_MESSAGE);
@@ -732,6 +769,7 @@ public class ControllerImplementation implements IController, ActionListener {
             }
         }
     }
+
     @Override
     public void countAll() {
         try {

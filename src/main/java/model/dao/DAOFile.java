@@ -205,4 +205,36 @@ public class DAOFile implements IDAO {
         ArrayList<Person> people = readAll();
         System.out.println("Total records: " + people.size());
     }
+
+    public void exportCSV(ArrayList<Person> people, File file) throws IOException {
+        FileWriter fw;
+        BufferedWriter bw;
+        fw = new FileWriter(file);
+        bw = new BufferedWriter(fw);
+        bw.write("NIF,Name,Email,Date of Birth,Photo,Phone");
+        bw.newLine();
+        for (Person p : people) {
+            bw.write(p.getNif() + ",");
+            bw.write(p.getName() + ",");
+            bw.write(p.getEmail() + ",");
+            if (p.getDateOfBirth() != null) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                bw.write(dateFormat.format(p.getDateOfBirth()) + ",");
+            } else {
+                bw.write("null" + ",");
+            }
+            if (p.getPhoto() != null) {
+                bw.write("yes" + ",");
+            } else {
+                bw.write("no" + ",");
+            }
+            if (p.getPhoneNumber() != null) {
+                bw.write(p.getPhoneNumber() + "\n");
+            } else {
+                bw.write("null" + "\n");
+            }
+        }
+        bw.flush();
+        bw.close();
+    }
 }
