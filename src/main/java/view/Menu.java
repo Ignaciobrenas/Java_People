@@ -45,7 +45,7 @@ public class Menu extends javax.swing.JFrame {
     }
     
     public JButton getDeleteAll() {
-        return delete;
+        return deleteAll1;
     }
     
     public JButton getCountAll() {
