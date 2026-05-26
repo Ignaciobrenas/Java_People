@@ -195,11 +195,11 @@ public class ControllerImplementation implements IController, ActionListener {
 
     @Override
     public boolean login(String username, String password) {
-        if (username.equals("admin") && password.equals("12345678")) {
+        if (username.equalsIgnoreCase("admin") && password.equals("12345678")) {
             this.isAdmin = true;
             this.isUser = false;
             return true;
-        } else if (!username.isEmpty() && !password.isEmpty()) {
+        } else if (username.equalsIgnoreCase("user") && password.equals("87654321")) {
             this.isAdmin = false;
             this.isUser = true;
             return true;
