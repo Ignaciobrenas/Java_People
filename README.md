@@ -1,3 +1,6 @@
+﻿> ðŸŽ“ **Academic Project Notice:** Developed as an advanced MVC assignment for the **1st year of Web Application Development (DAW)** at **STUCOM Pelai** (Barcelona) within the Object-Oriented Programming module (MP0485).
+
+---
 <h1 align="center">
   <p align="center">
     <img src="https://github.com/user-attachments/assets/89c0e841-a321-43b4-b8fa-cdd9cd2cd7c4" >
@@ -127,4 +130,5 @@
 <p>2️⃣.2️⃣ JPA: I have used locally the <a href="https://www.objectdb.com/download/2.9.0">ObjectDB</a> database with the root admin and password a admin. You can modify these parameters in the Routes.java file within the Start package.</p>
 <p>3️⃣ For the files I have also used local directories, but you can also use network drives. You can modify these parameters in the Routes.java file within the Start package.</p>
 <p>4️⃣ If you want an executable .jar file you must create it yourself.</p>
+
 
